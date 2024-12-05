@@ -211,7 +211,7 @@ function Index({ children }) {
         </header>
         <main className='p-4'>{children}</main>
         <footer className='text-center bg-white py-4'>
-          Group - 35 {new Date().getFullYear()}
+          PIET Group - 34 {new Date().getFullYear()}
         </footer>
       </div>
     </div>
