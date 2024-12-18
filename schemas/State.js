@@ -3,11 +3,11 @@ const mongoose = require('mongoose');
 const StateSchema = new mongoose.Schema(
   {
     id: String,
-
+    
     state: String,
   },
-  { timestamp: true },
   {
+    timestamps: true ,
     collection: 'state',
   },
 );

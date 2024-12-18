@@ -68,9 +68,19 @@ export default function AddServices() {
       tag,
       zipcode,
     } = field;
-    const cityObj = cityOption.filter((c) => c.id === city)[0];
-    const categoryObj = categoryOption.filter((c) => c.id === type)[0];
-    const stateObj = stateOption.filter((c) => c.id === state)[0];
+
+    const cityObj = cityOption.filter(
+      (c) => c.City.toLowerCase() === city.toLowerCase(),
+    )[0];
+    const categoryObj = categoryOption.filter(
+      (c) => c.name.toLowerCase() === type.toLowerCase(),
+    )[0];
+    const stateObj = stateOption.filter(
+      (c) => c.state.toLowerCase() === state.toLowerCase(),
+    )[0];
+
+    // After you get the filtered objects, you can then access the necessary properties
+    // console.log(cityObj, categoryObj, stateObj);
 
     const data = {
       name,
@@ -288,15 +298,19 @@ export default function AddServices() {
                     State: *
                   </div>
                   <Select
-                    value={field.state}
-                    onChange={(e) => setFieldFn('state', e)}
+                    value={field.state} // Controlled input value
+                    onChange={(value) => {
+                      setFieldFn('state', value); // Update the state value
+                      setFieldFn('city', ''); // Reset city selection when state changes
+                    }}
                     placeholder='Select State'
                     style={{ width: '100%', fontWeight: 'normal' }}
                   >
-                    {field.country &&
-                      stateOption.map((c) => (
-                        <Option key={c.id}>{c.state}</Option>
-                      ))}
+                    {stateOption.map((state) => (
+                      <Option key={state._id.$oid} value={state.state}>
+                        {state.state}
+                      </Option>
+                    ))}
                   </Select>
                 </div>
               </Col>
@@ -308,15 +322,18 @@ export default function AddServices() {
                     City: *
                   </div>
                   <Select
-                    value={field.city}
-                    onChange={(e) => setFieldFn('city', e)}
+                    value={field.city} // Controlled input value
+                    onChange={(value) => setFieldFn('city', value)} // Update city value
                     placeholder='Select City'
                     style={{ width: '100%', fontWeight: 'normal' }}
                   >
-                    {field.state &&
-                      cityOption
-                        .filter((c) => c.state === field.state)
-                        .map((c) => <Option key={c.id}>{c.city}</Option>)}
+                    {cityOption
+                      .filter((city) => city.State === field.state) // Filter cities by selected state
+                      .map((city) => (
+                        <Option key={city._id.$oid} value={city.City}>
+                          {city.City}
+                        </Option>
+                      ))}
                   </Select>
                 </div>
               </Col>

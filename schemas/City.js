@@ -7,10 +7,11 @@ const CitySchema = new mongoose.Schema(
     state: String,
     country: String,
   },
-  { timestamp: true },
   {
-    collection: 'city',
+    timestamp: true,
+    collection: 'cities',
   },
 );
 const Cities = mongoose.model('city', CitySchema);
 module.exports = Cities;
+
