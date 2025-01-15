@@ -1,4 +1,5 @@
 {
+  "homepage": "https://Narayan0918.github.io/CollegeProject-7th-sem",
   "name": "home-service-provider",
   "version": "1.0.0",
   "description": "",
@@ -8,7 +9,9 @@
     "start:dev": "nodemon index.js",
     "start:client": "cd client && npm start",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client",
-    "pretty": "prettier --write \"**/*.js\""
+    "pretty": "prettier --write \"**/*.js\"",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "author": "",
   "license": "ISC",
