@@ -12,7 +12,6 @@
     "pretty": "prettier --write \"**/*.js\"",
     "predeploy": "npm run build --prefix client",
     "deploy": "gh-pages -d client/build"
-
   },
   "author": "",
   "license": "ISC",
