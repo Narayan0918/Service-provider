@@ -1,4 +1,5 @@
 {
+  "homepage": "https://Narayan0918.github.io/CollegeProject-7th-sem",
   "name": "home-service-provider-client",
   "version": "0.1.0",
   "private": true,
@@ -37,6 +38,8 @@
     "eject": "react-scripts eject",
     "lint": "eslint . ",
     "lint-fix": "eslint . --fix",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "pretty": "prettier --write \"**/*.js\" \"**/*.jsx\""
   },
   "eslintConfig": {
