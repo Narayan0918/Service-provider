@@ -55,6 +55,9 @@ export default function AddServices() {
       return;
     }
     setLoader(true);
+    const tags = field.tag 
+  ? field.tag.split(',').map(tag => tag.trim()).filter(tag => tag !== '')
+  : [];
     const {
       street1,
       street2,
@@ -69,15 +72,27 @@ export default function AddServices() {
       zipcode,
     } = field;
 
-    const cityObj = cityOption.filter(
-      (c) => c.City.toLowerCase() === city.toLowerCase(),
-    )[0];
-    const categoryObj = categoryOption.filter(
-      (c) => c.name.toLowerCase() === type.toLowerCase(),
-    )[0];
-    const stateObj = stateOption.filter(
-      (c) => c.state.toLowerCase() === state.toLowerCase(),
-    )[0];
+    // const cityObj = cityOption.filter(
+    //   (c) => c.City.toLowerCase() === city.toLowerCase(),
+    // )[0];
+    // const categoryObj = categoryOption.filter(
+    //   (c) => c.name.toLowerCase() === type.toLowerCase(),
+    // )[0];
+    // const stateObj = stateOption.filter(
+    //   (c) => c.state.toLowerCase() === state.toLowerCase(),
+    // )[0];
+
+    const cityObj = cityOption.find(
+      (c) => c.city?.toLowerCase() === city?.toLowerCase(),
+    );
+
+    const categoryObj = categoryOption.find(
+      (c) => c.name?.toLowerCase() === type?.toLowerCase(),
+    );
+
+    const stateObj = stateOption.find(
+      (c) => c.state?.toLowerCase() === state?.toLowerCase(),
+    );
 
     // After you get the filtered objects, you can then access the necessary properties
     // console.log(cityObj, categoryObj, stateObj);
@@ -171,6 +186,59 @@ export default function AddServices() {
       })
       .catch((e) => console.log(e));
   }, []);
+
+  // -----------------------------------------------------------
+
+  const filteredCities = React.useMemo(() => {
+    if (!field.state) return [];
+
+    return cityOption.filter((city) => {
+      const cityState = city?.state?.toLowerCase().trim();
+      const selectedState = field.state?.toLowerCase().trim();
+      return cityState === selectedState;
+    });
+  }, [field.state, cityOption]);
+
+  // Debugging - log when state or cities change
+  React.useEffect(() => {
+    console.log('Current state selection:', field.state);
+    console.log('Available cities:', cityOption);
+    console.log('Filtered cities:', filteredCities);
+  }, [field.state, cityOption, filteredCities]);
+
+  //   const filteredCities = cityOption.filter(
+  //   (city) =>
+  //     city?.state?.toLowerCase().trim() ===
+  //     (field.state || '').toLowerCase().trim(),
+  // );
+
+  // console.log('Filtered Cities:', filteredCities);
+
+  // useEffect(() => {
+  //   // if (!field.state) {
+  //   //   console.log("No state selected yet.");
+  //   //   console.log(field.state)
+  //   //   return;
+  //   // }
+
+  //   console.log('field.state:', field.state);
+  //   console.log(
+  //     'Available Cities:',
+  //     cityOption.map((c) => `${c.city} (${c.state})`),
+  //   );
+
+  //   const filteredCities = field.state ? cityOption.filter(
+  //     (city) =>
+  //       city?.state?.toLowerCase().trim() ===
+  //       (field.state || '').toLowerCase().trim()
+  //   ):[];
+
+  //   // console.log('Filtered Cities:', filteredCities);
+
+  //   console.log('Filtered Cities based on selected state:', filteredCities);
+  // }, [field.state, cityOption]);
+
+  console.log('cityOption type:', Array.isArray(cityOption)); // Should be true
 
   return (
     <div className='w-[100%] h-[80vh] flex items-start justify-center mt-8'>
@@ -298,16 +366,22 @@ export default function AddServices() {
                     State: *
                   </div>
                   <Select
-                    value={field.state} // Controlled input value
+                    value={field.state}
                     onChange={(value) => {
-                      setFieldFn('state', value); // Update the state value
-                      setFieldFn('city', ''); // Reset city selection when state changes
+                      setField((prev) => ({
+                        ...prev,
+                        state: value,
+                        city: '', // Reset city when state changes
+                      }));
                     }}
                     placeholder='Select State'
-                    style={{ width: '100%', fontWeight: 'normal' }}
+                    style={{ width: '100%' }}
                   >
                     {stateOption.map((state) => (
-                      <Option key={state._id.$oid} value={state.state}>
+                      <Option
+                        key={state._id?.$oid || state._id}
+                        value={state.state}
+                      >
                         {state.state}
                       </Option>
                     ))}
@@ -322,18 +396,28 @@ export default function AddServices() {
                     City: *
                   </div>
                   <Select
-                    value={field.city} // Controlled input value
-                    onChange={(value) => setFieldFn('city', value)} // Update city value
-                    placeholder='Select City'
-                    style={{ width: '100%', fontWeight: 'normal' }}
+                    value={field.city}
+                    onChange={(value) => setFieldFn('city', value)}
+                    placeholder='Select city'
+                    style={{ width: '100%' }}
+                    disabled={!field.state} // Disable if no state selected
                   >
-                    {cityOption
-                      .filter((city) => city.State === field.state) // Filter cities by selected state
-                      .map((city) => (
-                        <Option key={city._id.$oid} value={city.City}>
-                          {city.City}
+                    {filteredCities.length > 0 ? (
+                      filteredCities.map((city) => (
+                        <Option
+                          key={city._id?.$oid || city._id}
+                          value={city.city}
+                        >
+                          {city.city}
                         </Option>
-                      ))}
+                      ))
+                    ) : (
+                      <Option disabled value=''>
+                        {field.state
+                          ? 'No cities found'
+                          : 'Select a state first'}
+                      </Option>
+                    )}
                   </Select>
                 </div>
               </Col>
